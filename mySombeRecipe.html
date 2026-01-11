@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fun Sombé Recipe with Animations</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+h1, h2 { color: #2f6f4e; text-align: center; }
+.hero { width: 100%; border-radius: 8px; margin-bottom: 15px; }
+
+/* Ingredients */
+#ingredients ul { list-style: none; padding-left: 0; }
+#ingredients li { margin-bottom: 6px; }
+
+/* Accompaniment */
+#accompaniment-container { text-align: center; margin: 30px 0; }
+#accompaniment-img { margin-top: 15px; width: 200px; border-radius: 6px; cursor:pointer; }
+#accompaniment-instructions { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 6px; }
+
+/* Steps */
+.step { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+.step img { width: 200px; border-radius: 6px; margin-bottom: 10px; cursor: pointer; }
+
+/* Progress Bar */
+#progress-container { width: 100%; background: #ddd; border-radius: 10px; height: 12px; margin-bottom: 20px; }
+#progress-bar { height: 12px; width: 0%; background: #2f6f4e; border-radius: 10px; transition: width 1s; }
+
+/* Calculator */
+#calculator { text-align: center; margin-top: 25px; }
+#calculator input { width: 50px; padding: 5px; }
+#calculator button { padding: 8px 15px; margin-left: 5px; background: #2f6f4e; color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+/* Confetti & floating animations */
+#confetti-container, #stars-container, #leaves-container, #sparkle-container {
+    position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; z-index: 9999;
+}
+
+/* Confetti animation */
+@keyframes confettiFall { 0% { transform: translateY(-10px) rotate(0deg); opacity:1;} 100% { transform: translateY(800px) rotate(360deg); opacity:0;} }
+/* Star float animation */
+@keyframes floatStar { 0% { transform: translateY(0) rotate(0deg); opacity:1;} 100% { transform: translateY(-150px) rotate(360deg); opacity:0;} }
+/* Leaf fall */
+@keyframes leafFall { 0% { transform: translateY(-50px) rotate(0deg); opacity:1;} 100% { transform: translateY(900px) rotate(360deg); opacity:0;} }
+/* Sparkle burst */
+@keyframes sparkle { 0% { transform: scale(0); opacity:1;} 50% { transform: scale(1.5); opacity:1;} 100% { transform: scale(0); opacity:0;} }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Fun Sombé Recipe 🎉</h1>
+<img class="hero" src="https://images.unsplash.com/photo-1604908177522-4329c1e6a18b" alt="Sombé dish">
+<p>Sombé is a traditional Central African dish made with cassava leaves, peanut paste, and palm oil.</p>
+
+<!-- Ingredients -->
+<div id="ingredients">
+<h2>Ingredients</h2>
+<ul>
+<li data-base="200">Cassava leaves: <span class="quantity">200</span> g</li>
+<li data-base="100">Peanut paste: <span class="quantity">100</span> g</li>
+<li data-base="50">Palm oil: <span class="quantity">50</span> ml</li>
+<li data-base="50">Onion: <span class="quantity">50</span> g</li>
+<li data-base="10">Garlic: <span class="quantity">10</span> g</li>
+<li data-base="5">Salt: <span class="quantity">5</span> g</li>
+<li data-base="500">Water: <span class="quantity">500</span> ml</li>
+</ul>
+</div>
+
+<!-- Accompaniment -->
+<div id="accompaniment-container">
+<h2>Choose an Accompaniment</h2>
+<select id="accompaniment-select">
+    <option value="">-- Select --</option>
+    <option value="rice">White Rice</option>
+    <option value="fufu">Fufu</option>
+    <option value="plantain">Fried Plantains</option>
+</select>
+<div id="accompaniment-display">
+    <img id="accompaniment-img" src="" alt="" style="display:none;">
+    <p id="accompaniment-text"></p>
+    <div id="accompaniment-instructions"></div>
+</div>
+</div>
+
+<!-- Calculator -->
+<div id="calculator">
+<label>Number of servings:</label>
+<input type="number" id="servings" value="1" min="1">
+<button onclick="calculateIngredients()">Calculate</button>
+</div>
+
+<h2>Cooking Steps</h2>
+<div id="progress-container"><div id="progress-bar"></div></div>
+
+<div id="steps">
+    <div class="step">
+        <img src="https://images.unsplash.com/photo-1584270354949-1d38b0b02c2b" alt="Wash leaves">
+        <p>Wash the cassava leaves thoroughly.</p>
+    </div>
+    <div class="step">
+        <img src="https://images.unsplash.com/photo-1604908812334-7cddc7f1b2bb" alt="Boil leaves">
+        <p>Boil the leaves for at least 30 minutes.</p>
+    </div>
+    <div class="step">
+        <img src="https://images.unsplash.com/photo-1590080877777-7bdfc1b75c07" alt="Add peanut paste">
+        <p>Add peanut paste and mix well.</p>
+    </div>
+    <div class="step">
+        <img src="https://images.unsplash.com/photo-1509440159598-9d4e6c4c3f55" alt="Add palm oil">
+        <p>Add palm oil, onion, garlic, and simmer until thick.</p>
+    </div>
+</div>
+</div>
+
+<!-- Animation containers -->
+<div id="confetti-container"></div>
+<div id="stars-container"></div>
+<div id="leaves-container"></div>
+<div id="sparkle-container"></div>
+
+<script>
+// Accompaniment selector
+const accompanimentSelect = document.getElementById("accompaniment-select");
+const accompanimentImg = document.getElementById("accompaniment-img");
+const accompanimentText = document.getElementById("accompaniment-text");
+const accompanimentInstructions = document.getElementById("accompaniment-instructions");
+
+const accompaniments = {
+    rice: { 
+        img: "https://images.unsplash.com/photo-1611080627117-3e3e3519dcaa", 
+        text: "White rice is a common accompaniment to Sombé.",
+        instructions: "Rinse 1 cup of rice. Boil 2 cups of water, add rice, simmer until fluffy."
+    },
+    fufu: { 
+        img: "https://images.unsplash.com/photo-1598511720896-5d79c2ec7e16", 
+        text: "Fufu is a starchy accompaniment made from cassava or yam.",
+        instructions: "Boil cassava or yam until soft. Mash and knead until smooth. Serve warm."
+    },
+    plantain: { 
+        img: "https://images.unsplash.com/photo-1589927986089-35812388d1a1", 
+        text: "Fried plantains add a sweet touch to your Sombé.",
+        instructions: "Peel and slice plantains. Fry in hot oil until golden. Drain and serve."
+    }
+};
+
+accompanimentSelect.addEventListener("change", () => {
+    const value = accompanimentSelect.value;
+    if (accompaniments[value]) {
+        accompanimentImg.src = accompaniments[value].img;
+        accompanimentImg.style.display = "block";
+        accompanimentText.textContent = accompaniments[value].text;
+        accompanimentInstructions.textContent = accompaniments[value].instructions;
+        launchSparkle(); // sparkle effect when selecting accompaniment
+    } else {
+        accompanimentImg.style.display = "none";
+        accompanimentText.textContent = "";
+        accompanimentInstructions.textContent = "";
+    }
+});
+
+// Ingredient calculator with confetti
+function calculateIngredients() {
+    const servings = parseInt(document.getElementById("servings").value);
+    const listItems = document.querySelectorAll("#ingredients li");
+    listItems.forEach(li => {
+        const base = parseFloat(li.getAttribute("data-base"));
+        li.querySelector(".quantity").textContent = (base * servings);
+    });
+    launchConfetti();
+}
+
+// Confetti function
+function launchConfetti() {
+    const container = document.getElementById("confetti-container");
+    for (let i=0; i<30; i++) {
+        const conf = document.createElement("div");
+        conf.style.position = "absolute";
+        conf.style.width = "10px";
+        conf.style.height = "10px";
+        conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
+        conf.style.top = "-10px";
+        conf.style.left = Math.random() * window.innerWidth + "px";
+        conf.style.borderRadius = "50%";
+        conf.style.opacity = 1;
+        conf.style.animation = `confettiFall ${1+Math.random()}s linear forwards`;
+        container.appendChild(conf);
+        setTimeout(() => container.removeChild(conf), 2000);
+    }
+}
+
+// Sparkle effect
+function launchSparkle() {
+    const container = document.getElementById("sparkle-container");
+    for (let i=0; i<15; i++) {
+        const star = document.createElement("div");
+        star.style.position = "absolute";
+        star.style.width = "8px";
+        star.style.height = "8px";
+        star.style.background = "yellow";
+        star.style.borderRadius = "50%";
+        star.style.top = (Math.random()*window.innerHeight)+"px";
+        star.style.left = (Math.random()*window.innerWidth)+"px";
+        star.style.opacity = 1;
+        star.style.animation = `sparkle 0.8s forwards`;
+        container.appendChild(star);
+        setTimeout(()=>container.removeChild(star),800);
+    }
+}
+
+// Hover stars on step images
+document.querySelectorAll(".step img").forEach(img => {
+    img.addEventListener("mouseenter", () => {
+        const container = document.getElementById("stars-container");
+        for(let i=0;i<5;i++){
+            const star = document.createElement("div");
+            star.style.position="absolute";
+            star.style.width="6px";
+            star.style.height="6px";
+            star.style.background="gold";
+            star.style.borderRadius="50%";
+            const rect = img.getBoundingClientRect();
+            star.style.top = rect.top + Math.random()*rect.height + "px";
+            star.style.left = rect.left + Math.random()*rect.width + "px";
+            star.style.animation = `floatStar ${1+Math.random()}s forwards`;
+            container.appendChild(star);
+            setTimeout(()=>container.removeChild(star),1500);
+        }
+    });
+});
+</script>
+
+</body>
+</html>
